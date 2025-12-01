@@ -8,13 +8,7 @@ safeDial = 50
 # wrap safeDial between 0 - 100
 def AddSafeDial(value: int):
     global safeDial
-    
-    safeDial += value
-    if safeDial >= 100:
-        safeDial = safeDial % 100
-    if safeDial < 0:
-        safeDial += 100
-
+    safeDial = (safeDial + value) % 100
 
 def main():
     global safeDial
@@ -37,11 +31,8 @@ def main():
             print("The dial is rotated {} to point at {}".format(line.strip(), safeDial))
             if safeDial == 0:
                 zeroCounter += 1
-                #print("we got a zero!")
         
         print("The password is ", zeroCounter)
-
-
 
 if __name__ == "__main__":
     main()
