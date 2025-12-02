@@ -1,5 +1,6 @@
 import unittest
 from puzzle1 import FindRangeOfSplitableNumbers
+from puzzle1 import CheckForPatterns
 
 class TestFindRangeOfSplitableNumbers(unittest.TestCase):
     def test1(self):
@@ -17,5 +18,13 @@ class TestFindRangeOfSplitableNumbers(unittest.TestCase):
         self.assertEqual(start, 10)
         self.assertEqual(end, 99)
 
+class TestCheckForPatterns(unittest.TestCase):
+    def test1(self):
+        patterns = CheckForPatterns(1999, 2100)
+        self.assertEqual(patterns, [2020])
+
+    def test2(self):
+        patterns = CheckForPatterns(12, 33)
+        self.assertEqual(patterns, [ 22, 33])
 if __name__ == "__main__":
     unittest.main()

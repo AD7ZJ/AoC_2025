@@ -3,6 +3,7 @@
 import sys
 
 accum = 0
+patternsSeen = set()
 
 def FindRangeOfSplitableNumbers(start: str, end: str) -> tuple[int, int]:
     # is there a number in this range that has a length evenly divisible by 2?
@@ -36,24 +37,36 @@ def SplitNumber(num: int) -> list[str]:
     middle = len(numStr) // 2
     return [numStr[:middle], numStr[middle:]]
 
-def CheckForPatterns(start: int, end: int):
+def CheckForPatterns(start: int, end: int) -> list[int]:
     global accum
+    global patternsSeen
+    patternList = []
+
     print(f"{start}-{end}   ", end="")
 
     num = SplitNumber(start)
 
     searchStart = int(num[0])
 
-    #the smallest pattern will be the first half repeated
+    #the smallest possible pattern will be the first half repeated. But even that might be too large...
     pattern = int(str(searchStart) + str(searchStart))
 
     while (pattern <= end):
-        print(f"Found {pattern} ", end="")
-        accum += pattern
+        if pattern >= start:
+            print(f" {pattern}, ", end="")
+
+            if pattern not in patternsSeen:
+                patternsSeen.add(pattern)
+                patternList.append(pattern)
+                accum += pattern
+            else:
+                print("We've seen this before: ", pattern)
+
         searchStart += 1
         pattern = int(str(searchStart) + str(searchStart))
 
-    print(f"\n\nTotal: {accum}")
+    print(f"\n\nTotal: {accum}")   
+    return patternList
 
 
 
