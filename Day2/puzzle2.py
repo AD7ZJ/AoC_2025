@@ -17,16 +17,12 @@ def FindRangeOfSplitableNumbers(start: str, end: str, n: int) -> tuple[int, int]
         # we would have to start at the next power of 10
         startsAt = 10 ** (startLen - 1 + (n - (startLen % n))) 
 
-    print("startsAt ", startsAt)
-
     if (endLen % n == 0):
         # the end is already evenly divisible, so we stop there
         endsAt = int(end)
     else:
         # we would have to stop at the previous evenly dvisible power of 10 minus 1
         endsAt = (10 ** (endLen - (endLen % n))) - 1
-
-    print("endsAt ", endsAt)
     
     if startsAt < endsAt:
         return startsAt, endsAt
@@ -35,25 +31,23 @@ def FindRangeOfSplitableNumbers(start: str, end: str, n: int) -> tuple[int, int]
         return 0, 0
 
 
-# splits number in half. Assumes it's evenly divisible
-def SplitNumber(num: int) -> list[str]:
+# splits number to give first n'th. Assumes it's evenly divisible by given n
+def SplitNumber(num: int, n: int) -> int:
     numStr = str(num)
-    middle = len(numStr) // 2
-    return [numStr[:middle], numStr[middle:]]
+    split = len(numStr) // n
+    return int(numStr[:split])
 
-def CheckForPatterns(start: int, end: int) -> list[int]:
+def CheckForPatternsOfLengthN(start: int, end: int, n: int) -> list[int]:
     global accum
     global patternsSeen
     patternList = []
 
     print(f"{start}-{end}   ", end="")
 
-    num = SplitNumber(start)
+    searchStart = SplitNumber(start, n)
 
-    searchStart = int(num[0])
-
-    #the smallest possible pattern will be the first half repeated. But even that might be too large...
-    pattern = int(str(searchStart) + str(searchStart))
+    #the smallest possible pattern will be this split repeated. But even that might be too large...
+    pattern = int(str(searchStart) * n) # * on a string means concatenate n times
 
     while (pattern <= end):
         if pattern >= start:
@@ -69,7 +63,6 @@ def CheckForPatterns(start: int, end: int) -> list[int]:
         searchStart += 1
         pattern = int(str(searchStart) + str(searchStart))
 
-    print(f"\n")   
     return patternList
 
 
@@ -91,9 +84,16 @@ def main():
             startAndEnd = r.split('-')
             start = startAndEnd[0]
             end = startAndEnd[1]
-            startSearch, endSearch = FindRangeOfSplitableNumbers(start, end)
-            if startSearch != 0:
-                CheckForPatterns(startSearch, endSearch)
+
+            for i in range(2, 6):
+                startSearch, endSearch = FindRangeOfSplitableNumbers(start, end, i)
+                if startSearch != 0:
+                    CheckForPatternsOfLengthN(startSearch, endSearch, i)
+                else:
+                    print(f"\nNothing divisible by {i} for range {start}-{end} ")
+
+            
+            print(f"\n")   
 
         #print(ranges)
 
