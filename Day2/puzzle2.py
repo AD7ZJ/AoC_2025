@@ -2,7 +2,6 @@
 
 import sys
 
-accum = 0
 patternsSeen = set()
 
 def FindRangeOfSplitableNumbers(start: str, end: str, n: int) -> tuple[int, int]:
@@ -37,12 +36,10 @@ def SplitNumber(num: int, n: int) -> int:
     split = len(numStr) // n
     return int(numStr[:split])
 
+
 def CheckForPatternsOfLengthN(start: int, end: int, n: int) -> list[int]:
-    global accum
     global patternsSeen
     patternList = []
-
-    print(f"{start}-{end}   ", end="")
 
     searchStart = SplitNumber(start, n)
 
@@ -51,23 +48,14 @@ def CheckForPatternsOfLengthN(start: int, end: int, n: int) -> list[int]:
 
     while (pattern <= end):
         if pattern >= start:
-            print(f" {pattern}, ", end="")
-
             if pattern not in patternsSeen:
                 patternsSeen.add(pattern)
                 patternList.append(pattern)
-                accum += pattern
-            else:
-                print("We've seen this before: ", pattern)
 
         searchStart += 1
-        pattern = int(str(searchStart) + str(searchStart))
+        pattern = int(str(searchStart) * n)
 
     return patternList
-
-
-
-
 
 
 def main():
@@ -80,22 +68,22 @@ def main():
         line = f.readline().strip()
         ranges = line.split(',')
 
+        accum = 0
         for r in ranges:
             startAndEnd = r.split('-')
             start = startAndEnd[0]
             end = startAndEnd[1]
 
-            for i in range(2, 6):
+            patternsFound = []
+            for i in range(2, 15):
                 startSearch, endSearch = FindRangeOfSplitableNumbers(start, end, i)
                 if startSearch != 0:
-                    CheckForPatternsOfLengthN(startSearch, endSearch, i)
-                else:
-                    print(f"\nNothing divisible by {i} for range {start}-{end} ")
+                    patternsFound.extend(CheckForPatternsOfLengthN(startSearch, endSearch, i))
 
-            
-            print(f"\n")   
+            print(f"{start}-{end:<20}: {patternsFound}")
+            accum += sum(patternsFound)
 
-        #print(ranges)
+        print("Total: ", accum)
 
 if __name__ == "__main__":
     main()
