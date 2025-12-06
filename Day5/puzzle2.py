@@ -1,26 +1,5 @@
 import sys
 
-def CheckIfNInRange(ranges, n):
-    lo = 0
-    hi = len(ranges) - 1
-    check = 0
-    while lo <= hi:
-        check = (lo + hi) // 2
-
-        if ranges[check][0] <= n <= ranges[check][1]:
-            return True
-        elif n < ranges[check][0]:
-            hi = check - 1
-            #print(f"{n} is < {ranges[check]}. hi: {hi} lo: {lo}")
-        else:
-            lo = check + 1
-            #print(f"{n} is > {ranges[check]}. hi: {hi} lo: {lo}")
-
-    return False
-
-        
-    
-
 def CombineAndSortRanges(ranges):
     ranges = sorted(ranges)
     combined = []
@@ -59,7 +38,7 @@ def main():
     
     for range in freshRanges:
         accum += range[1] - range[0] + 1
-        
+
     print(f"Within the ranges there are {accum} fresh ingredients!")
 
 
