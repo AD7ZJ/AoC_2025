@@ -9,17 +9,9 @@ def main():
 
     with open(sys.argv[1], "r") as f:
         for line in f:
-            #line = line.strip()
             matrix.append(list(line))
-    print(matrix)
 
-
-    # the operator is always left aligned to the number column
     accum = 0
-
-    # find the next operator
-    matrix[-1]
-
     columnAcc = 0
     columnStart = 0
     nextColumnStart = 0
@@ -28,16 +20,18 @@ def main():
         if x == nextColumnStart:
             columnStart = nextColumnStart
             accum += columnAcc
+            print(f"Col total: {columnAcc}")
             columnAcc = 0
 
             # find where the next column starts by looking for the * or + operator
-            for i in range(x, x+8):
-                if matrix[-1][i] == "*" or matrix[-1][i] == "+":
-                    nextColumnStart = i
-                    break
+            for i in range(x+1, x+8):
+                if i < len(matrix[0]):
+                    if matrix[-1][i] == "*" or matrix[-1][i] == "+":
+                        nextColumnStart = i
+                        print(f"Found the next colStart at {i}")
+                        break
             
             op = matrix[-1][columnStart]
-            print("")
             if op == "*":
                 columnAcc = 1
         
@@ -52,13 +46,13 @@ def main():
                 columnAcc += int(colStr)
             elif op == "*":
                 columnAcc = columnAcc * int(colStr)
+                
         x += 1
         print(f"{colStr} {op} ", end="")
-        #print(f" Total: {columnAcc}")
 
-        
-
-    print(f"Total: {accum}")
+    # add the last column
+    accum += columnAcc
+    print(f"\nTotal: {accum}")
 
 
 if __name__ == "__main__":
