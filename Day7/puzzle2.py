@@ -13,43 +13,41 @@ def main():
             matrix.append(list(line))
 
     # the start is marked by 'S' on the first line
-    numPaths = DepthFirstSearchAllPaths(matrix[0].index('S'), 0, matrix)
+    numPaths = SearchAllPossiblePaths(matrix[0].index('S'), 0, matrix)
     print(f"Found {numPaths} unique paths")
 
 
-def DepthFirstSearchAllPaths(startx, starty, matrix):
+# I tried a regular depth first search algorithm, and that was taking waayyyy too long. We don't need the actual 
+# paths, just the number of unique paths. 
+def SearchAllPossiblePaths(startx, starty, matrix):
     height = len(matrix)
     width = len(matrix[0])
 
-    # push the starting location onto the stack. The path at this point is a list of len 1...
-    stack = [(startx, starty, [(startx, starty)])]
+    # counts will track the number of times a column could be taken as a unique path
+    counts = [0] * width
+    counts[startx] = 1
 
-    completeUniquePaths = 0
+    for y in range(starty, height - 1):
+        next_counts = [0] * width
+        for x in range(width):
+            if counts[x] == 0:
+                continue
+            below_char = matrix[y + 1][x]
+            if below_char == '.':
+                # move straight down
+                next_counts[x] += counts[x]
+            elif below_char == '^':
+                # split left and right, if in bounds
+                if x - 1 >= 0:
+                    next_counts[x - 1] += counts[x]
+                if x + 1 < width:
+                    next_counts[x + 1] += counts[x]
 
-    while stack:
-        x, y, path = stack.pop()
+        # propagate the list to the next row
+        counts = next_counts
 
-        # if we've hit the last row, record this as a finished path
-        if y == height - 1:
-            completeUniquePaths += 1
-            continue
-
-        # look one row down
-        ny = y + 1
-        below_char = matrix[ny][x]
-
-        if below_char == '.':
-            # move straight down
-            stack.append((x, ny, path + [(x, ny)]))
-        elif below_char == '^':
-            # split left and right, if in bounds
-            if x - 1 >= 0:
-                stack.append((x - 1, ny, path + [(x - 1, ny)]))
-            if x + 1 < width:
-                stack.append((x + 1, ny, path + [(x + 1, ny)]))
-
-    # return number of unique paths
-    return completeUniquePaths
+    # unique paths = sum of counts in the bottom row
+    return sum(counts)
 
 
 def PrintMatrix(matrix):
