@@ -2,7 +2,6 @@ import math
 import sys
 
 def main():
-    global distanceCache
     if len(sys.argv) < 2:
         print("Usage: python puzzle1.py <filename>")
         return
@@ -21,11 +20,13 @@ def main():
     # sort based on the distance (element 0 of the tuple)
     distanceCache.sort(key=lambda tup: tup[0])
 
-    for thing in distanceCache[:10]:
-        print(thing)
+    circuitList = []
+    connectionsMade = 0
+    totalConnectionsToMake = 1000 
+    for entry in distanceCache:
+        if connectionsMade >= totalConnectionsToMake:
+            break
 
-    circuitList = [{distanceCache[0][1], distanceCache[0][2]}]
-    for entry in distanceCache[:10]:
         p1 = entry[1]
         p2 = entry[2]
 
@@ -36,26 +37,39 @@ def main():
             # start a new set
             circuitList.append({p1, p2})
             print(f"started a new group {p1} and {p2}")
+            connectionsMade += 1
         elif g1 != None and g2 == None:
             g1.add(p2)
             print(f"added {p2}")
+            connectionsMade += 1
         elif g1 == None and g2 != None:
             g2.add(p1)
             print(f"added {p1}")
+            connectionsMade += 1
         elif g1 != g2:
             # merge these sets, this point pair is connecting them together
             g1.update(g2)
             circuitList.remove(g2)
             print(f"merged two sets")
+            connectionsMade += 1
+        elif g1 == g2:
+            # do nothing but this still counts as a connection
+            connectionsMade += 1
     
+
+    # at this point we have a list of sets of the connected boxes. Sort so the largest are first....
+    circuitList.sort(key=lambda s: len(s), reverse=True)
 
     for thing in circuitList:
         print(thing)
 
+    puzzleAnswer = len(circuitList[0]) * len(circuitList[1]) * len(circuitList[2])
+    print(f"The puzzle answer is {puzzleAnswer}")
 
 
-def FindCircuitGroup(list, point):
-    for circuit in list:
+
+def FindCircuitGroup(groups, point):
+    for circuit in groups:
         if point in circuit:
             return circuit
     return None
@@ -63,19 +77,15 @@ def FindCircuitGroup(list, point):
 
 def CalcDistBetweenAllPairsBf(list):
     distanceCache = []
-    pointsSeen = set()
 
     # brute force all possible pairs and cache the distance between them
     for i in range(len(list)):
-        for j in range(len(list)):
+        for j in range(i + 1, len(list)):
             if i != j:
                 p1 = list[i]
                 p2 = list[j]
                 dist = DistBetween2Points(p1, p2)
-                # avoid caching reversed pairs as dupes
-                if (p1, p2) not in pointsSeen and (p2, p1) not in pointsSeen:
-                    pointsSeen.add((p1, p2))
-                    distanceCache.append((dist, p1, p2))
+                distanceCache.append((dist, p1, p2))
 
     return distanceCache
 
