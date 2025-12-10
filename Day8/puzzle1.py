@@ -15,8 +15,8 @@ def main():
             x,y,z = line.split(',')
             pointList.append((int(x),int(y),int(z)))
 
-    p1, p2 = FindClosestPairBf(pointList)
-    print(f"Distance between {p1} and {p2} is {DistBetween2Points(p1, p2)}")
+    # returns a tuple like this: (316.90219311326956, (162, 817, 812), (425, 690, 689))
+    distanceCache = CalcDistBetweenAllPairsBf(pointList)
 
     # sort based on the distance (element 0 of the tuple)
     distanceCache.sort(key=lambda tup: tup[0])
@@ -61,12 +61,11 @@ def FindCircuitGroup(list, point):
     return None
 
 
-distanceCache = []
-pointsSeen = set()
-def FindClosestPairBf(list):
-    minDistance = 1e10
-    minDistP1 = None
-    minDistP2 = None
+def CalcDistBetweenAllPairsBf(list):
+    distanceCache = []
+    pointsSeen = set()
+
+    # brute force all possible pairs and cache the distance between them
     for i in range(len(list)):
         for j in range(len(list)):
             if i != j:
@@ -78,27 +77,7 @@ def FindClosestPairBf(list):
                     pointsSeen.add((p1, p2))
                     distanceCache.append((dist, p1, p2))
 
-                if dist < minDistance:
-                    minDistance = dist
-                    minDistP1 = p1
-                    minDistP2 = p2
-
-    return minDistP1, minDistP2
-
-def FindClosestToListOfPoints(listToSearch, myList):
-    minDistance = 1e10
-    minDistP1 = None
-    minDistP2 = None
-    for i in range(len(listToSearch)):
-        for j in range(len(myList)):
-            p1 = listToSearch[i]
-            p2 = myList[j]
-            if p1 != p2:
-                dist = DistBetween2Points(p1, p2)
-                if dist < minDistance:
-                    minDistance = dist
-                    minDistP1 = list[i]
-                    minDistP2 = list[j]
+    return distanceCache
 
 
 def DistBetween2Points(p1, p2):
@@ -107,10 +86,6 @@ def DistBetween2Points(p1, p2):
         (p1[1] - p2[1])**2 +
         (p1[2] - p2[2])**2
     )
-
-def PrintMatrix(matrix):
-    for row in matrix:
-        print("".join(row))
 
 if __name__ == "__main__":
     main()
